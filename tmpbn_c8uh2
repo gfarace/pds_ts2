@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on 30/8/2021
+
+@author: Gisela Farace
+
+Descripción: Tarea semanal 2
+Desarrollar un algoritmo que calcule la transformada discreta de Fourier (DFT)
+------------
+"""
+
+# Importación de módulos para Jupyter
+
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import pdsmodulos as pds
+
+#%% Funciones
+
+# Senoidal
+
+def senoidal(vmax, dc, ff, ph, nn, fs):
+    ts = 1/fs # tiempo de muestreo
+    df = fs/nn # resolución espectral 
+    
+    # grilla de sampleo temporal
+    tt = np.linspace(0, (nn-1)*ts, nn).flatten()
+    
+    # grilla de sampleo frecuencial
+    sen = vmax*np.sin(2*np.pi*ff*tt + ph)+dc
+    
+    return tt, sen
+
+# La DFT se define como:
+# X_k = sumatoria{x_n.e^(-j2.pi.k.n/N)} desde N=0 a N-1
+
+def dft(xx):
+    N = len(xx) #cantidad de muestras
+    nn = np.arange(N)    
+    k = nn.reshape((N, 1))  
+    XX = [0]*N
+
+    e = np.exp(-2j * np.pi * k * nn / N)
+    
+    XX = np.dot(e, xx)
+
+    return  XX,k
+# %%
+        
+#%% Presentación gráfica de los resultados
+vmax = 1
+dc = 0
+ff = 1
+ph = 0
+nn = 1000
+fs = 100 
+
+tt,xx = senoidal(vmax, dc, ff, ph, nn, fs)
+XX,k = dft(xx)
+
+A = XX.shape[0]
+nn = np.arange(A)
+T = A/fs
+ff = nn/T 
+
+
+plt.figure(1)
+line_hdls = plt.plot(ff, abs(XX))
+plt.title('DFT')
+plt.xlabel('Frecuencia [Hz]')
+plt.ylabel('Amplitud [V]')
+
+axes_hdl = plt.gca()
+
+plt.show()
+        
+XX = [0]*N
